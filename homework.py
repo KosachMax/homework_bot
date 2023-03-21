@@ -15,7 +15,7 @@ TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
 RETRY_PERIOD = 600
 ENDPOINT = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
-HEADERS = {'Authorization': f'OAuth {PRACTICUM_TOKEN}'}
+HEADERS = {'Authorization': f"OAuth {PRACTICUM_TOKEN}"}
 
 HOMEWORK_VERDICTS = {
     'approved': 'Работа проверена: ревьюеру всё понравилось. Ура!',
@@ -29,7 +29,16 @@ logger.addHandler(logging.StreamHandler())
 
 def check_tokens():
     """Checking tokens availability."""
-    return all([PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID])
+    token_dict = {"PRACTICUM_TOKEN": PRACTICUM_TOKEN,
+                  "TELEGRAM_TOKEN": TELEGRAM_TOKEN,
+                  "TELEGRAM_CHAT_ID": TELEGRAM_CHAT_ID}
+    for token_name, token_value in token_dict.items():
+        if not token_value:
+            logger.critical(f'Can not get {token_name}')
+            exit()
+        else:
+            logger.info(f'Got token - {token_name}')
+    return True
 
 
 def send_message(bot, message):
