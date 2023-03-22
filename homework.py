@@ -66,7 +66,7 @@ def get_api_answer(timestamp_now):
     try:
         homework_status = requests.get(**params_request)
         logger.debug('Api request started')
-    except RequestException as error:
+    except requests.RequestException as error:
         logger.critical(f"API request error – {error}")
     except ConnectionError as error:
         logger.critical(f'{error} cen not connect to server')
