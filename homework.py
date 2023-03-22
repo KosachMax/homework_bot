@@ -2,6 +2,7 @@ import logging
 import os
 import time
 from http import HTTPStatus
+from json import JSONDecodeError
 
 import requests
 import telegram
@@ -65,12 +66,16 @@ def get_api_answer(timestamp_now):
     try:
         homework_status = requests.get(**params_request)
         logger.debug('Api request started')
-    except Exception as error:
-        logger.error(f"API request error – {error}")
+    except RequestException as error:
+        logger.critical(f"API request error – {error}")
+    except ConnectionError as error:
+        logger.critical(f'{error} cen not connect to server')
+    except JSONDecodeError as error:
+        raise JSONDecodeError(f'Error in JSON - {error}')
     else:
         if homework_status.status_code != HTTPStatus.OK:
-            error_message = "Incorrect page status"
-            raise requests.HTTPError(error_message)
+            error = f'{ENDPOINT} status code != 200'
+            raise requests.HTTPError(error)
         return homework_status.json()
 
 
